@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TC.Bowling\TC.Bowling.csproj" />
+    <ProjectReference Include="..\TC.Bowling.Domain\TC.Bowling.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,11 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/Environment/Hierarchy/Build/BuildTool/RecentDotNetCliExePaths/=_002Fnix_002Fstore_002Faqh39srx3mg0a7pnmjw4q55x9vp3ha4a_002Ddotnet_002Dcore_002Dcombined_002Fdotnet/@EntryIndexedValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Hierarchy/Build/BuildTool/RecentDotNetCliExePaths/=_002Fnix_002Fstore_002Faqh39srx3mg0a7pnmjw4q55x9vp3ha4a_002Ddotnet_002Dcore_002Dcombined_002Fdotnet/@EntryIndexRemoved">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Hierarchy/Build/BuildTool/RecentDotNetCliExePaths/=_002Fnix_002Fstore_002Fsmihzwx9ajcxid2v4dqbi3wnrnzd8b5j_002Ddotnet_002Dsdk_002D7_002E0_002E102_002Fdotnet/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/DotNetCliExePath/@EntryValue">/nix/store/smihzwx9ajcxid2v4dqbi3wnrnzd8b5j-dotnet-sdk-7.0.102/dotnet</s:String>
+	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">/nix/store/smihzwx9ajcxid2v4dqbi3wnrnzd8b5j-dotnet-sdk-7.0.102/sdk/7.0.102/MSBuild.dll</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3c43679d_002D9b53_002D499c_002Db3c7_002D1128dbe83765/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Example" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::A94925BE-6411-40D1-A59F-C1F611B32B86::net7.0::TC.Bowling.Tests.Tests.Example&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
