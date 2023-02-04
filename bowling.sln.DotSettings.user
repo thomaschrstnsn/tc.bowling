@@ -7,5 +7,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3c43679d_002D9b53_002D499c_002Db3c7_002D1128dbe83765/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Example" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::A94925BE-6411-40D1-A59F-C1F611B32B86::net7.0::TC.Bowling.Tests.Tests.Example&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::A94925BE-6411-40D1-A59F-C1F611B32B86::net7.0::TC.Bowling.Tests.Tests.PerfectGame&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::A94925BE-6411-40D1-A59F-C1F611B32B86::net7.0::TC.Bowling.Tests.Tests.GutterGame&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

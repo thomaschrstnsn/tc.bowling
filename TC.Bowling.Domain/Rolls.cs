@@ -44,13 +44,23 @@ public abstract record FrameScore
             => new(first.Pins, second);
     }
 
-    public sealed record FinalBonusFrame : FrameScore
+    public sealed record FinalFrameTwo(
+        RolledPins First,
+        RolledPins Second) : FrameScore(First, Second)
+    {
+        public static FinalFrameTwo FromFirstRoll(
+            FirstRoll firstRoll,
+            RolledPins second) =>
+            new(firstRoll.Pins, second);
+    }
+
+    public sealed record FinalFrameThree : FrameScore
     {
         public RolledPins First { get; }
         public RolledPins Second { get; }
         public RolledPins Third { get; }
 
-        private FinalBonusFrame(
+        private FinalFrameThree(
             RolledPins first,
             RolledPins second,
             RolledPins third) : base( first, second, third)
@@ -65,8 +75,8 @@ public abstract record FrameScore
             Third = third;
         }
 
-        public static FinalBonusFrame FromSecondRoll(
-            SecondRoll secondRoll,
+        public static FinalFrameThree FromFinalFrameTwo(
+            FinalFrameTwo secondRoll,
             RolledPins third) =>
             new(
                 secondRoll.First,

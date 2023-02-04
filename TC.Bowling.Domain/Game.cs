@@ -25,25 +25,25 @@ public record Game
             new GameState.FirstRoll(Frame.First),
 
         // new frame
-        (var frame and < 9, FrameScore.SecondRoll) =>
-            new GameState.FirstRoll(new Frame(frame + 1)),
-
-        // bonus roll (strike or spare in last frame)
-        (var frame and 10, FrameScore.SecondRoll {Score: >= 10}) =>
-            new GameState.FinalBonusRoll(new Frame(frame)),
-
-        // strike (before the last frame)
-        (var frame and < 10, FrameScore.FirstRoll {Score: 10}) =>
+        (var frame and <= 9, FrameScore.SecondRoll) =>
             new GameState.FirstRoll(new Frame(frame + 1)),
 
         // strike in the last frame
         (var frame and 10, FrameScore.FirstRoll {Score: 10}) =>
             new GameState.SecondRoll(new Frame(frame)),
 
+        // bonus roll (strike or spare in last frame)
+        (var frame and 10, FrameScore.FinalFrameTwo {Score: >= 10}) =>
+            new GameState.FinalBonusRoll(new Frame(frame)),
+
+        // strike (before the last frame)
+        (var frame and < 10, FrameScore.FirstRoll {Score: 10}) =>
+            new GameState.FirstRoll(new Frame(frame + 1)),
+
         // second roll in a frame
         (var frame, FrameScore.FirstRoll) =>
             new GameState.SecondRoll(new Frame(frame)),
-
+        
         // finished
         (10, _)
             => new GameState.Complete(),
@@ -68,17 +68,29 @@ public record Game
             throw new Exception($"game state mismatch, expected to perform a second roll but found {currentFrame}");
         }
 
-        FrameScore.FinalBonusFrame FinalBonusRoll()
+        FrameScore.FinalFrameTwo FinalFrameRollTwo()
         {
             var currentFrame = Frames.Last();
-            if (currentFrame is FrameScore.SecondRoll secondRoll)
+            if (currentFrame is FrameScore.FirstRoll firstRoll)
             {
-                return FrameScore.FinalBonusFrame.FromSecondRoll(secondRoll, rolledPins);
+                return FrameScore.FinalFrameTwo.FromFirstRoll(firstRoll, rolledPins);
+            }
+
+            throw new Exception($"game state mismatch, expected to perform a second roll but found {currentFrame}");
+        }
+
+        FrameScore.FinalFrameThree FinalFrameRollThree()
+        {
+            var currentFrame = Frames.Last();
+            if (currentFrame is FrameScore.FinalFrameTwo secondRoll)
+            {
+                return FrameScore.FinalFrameThree.FromFinalFrameTwo(secondRoll, rolledPins);
             }
 
             throw new Exception($"game state mismatch, expected to perform a third roll but found {currentFrame}");
         }
 
+        var currentIndex = Frames.Count - 1;
         return State switch
         {
             GameState.Complete =>
@@ -87,11 +99,14 @@ public record Game
             GameState.FirstRoll =>
                 this with {Frames = Frames.Add(NewFrame())},
 
+            GameState.SecondRoll {Frame.Number: 10} =>
+                this with {Frames = Frames.SetItem(currentIndex, FinalFrameRollTwo())},
+
             GameState.SecondRoll =>
-                this with {Frames = Frames.SetItem(Frames.Count - 1, SecondRoll())},
+                this with {Frames = Frames.SetItem(currentIndex, SecondRoll())},
 
             GameState.FinalBonusRoll =>
-                this with {Frames = Frames.SetItem(Frames.Count - 1, FinalBonusRoll())},
+                this with {Frames = Frames.SetItem(currentIndex, FinalFrameRollThree())},
 
             var unexpectedState =>
                 throw new Exception($"Unexpected game state {unexpectedState}")
@@ -110,6 +125,7 @@ public record Game
                              index) => (frame, index)))
             {
                 result += frame.Score;
+
                 if (frame.Score == 10 && index < 9)
                 {
                     // bonus for strike/spare before final frame
@@ -131,10 +147,15 @@ public record Game
                         var bonus = (rollsToInclude, nextFrame) switch
                         {
                             (_, FrameScore.FirstRoll firstRoll) => firstRoll.Score,
+
                             (1, FrameScore.SecondRoll secondRoll) => secondRoll.First.Pins,
-                            (1, FrameScore.FinalBonusFrame bonusFrame) => bonusFrame.First.Pins,
+                            (1, FrameScore.FinalFrameTwo bonusFrame) => bonusFrame.First.Pins,
+                            (1, FrameScore.FinalFrameThree bonusFrame) => bonusFrame.First.Pins,
+
                             (2, FrameScore.SecondRoll secondRoll) => secondRoll.Score,
-                            (2, FrameScore.FinalBonusFrame bonusFrame) =>
+                            (2, FrameScore.FinalFrameTwo bonusFrame) =>
+                                bonusFrame.First.Pins + bonusFrame.Second.Pins,
+                            (2, FrameScore.FinalFrameThree bonusFrame) =>
                                 bonusFrame.First.Pins + bonusFrame.Second.Pins,
 
                             var (unexpectedRollsToInclude, unexpectedFrame) =>
@@ -143,6 +164,28 @@ public record Game
                         };
 
                         result += bonus;
+
+                        var nextNextIndex = nextIndex + 1;
+                        if (nextFrame is FrameScore.FirstRoll {Pins.Pins: 10} && rollsToInclude == 2 &&
+                            Frames.Count > nextNextIndex)
+                        {
+                            var nextNextFrame = Frames[nextNextIndex];
+
+                            var nextBonus = (rollsToInclude-1, nextNextFrame) switch
+                            {
+                                (_, FrameScore.FirstRoll firstRoll) => firstRoll.Score,
+
+                                (1, FrameScore.SecondRoll secondRoll) => secondRoll.First.Pins,
+                                (1, FrameScore.FinalFrameTwo bonusFrame) => bonusFrame.First.Pins,
+                                (1, FrameScore.FinalFrameThree bonusFrame) => bonusFrame.First.Pins,
+
+                                var (unexpectedRollsToInclude, unexpectedFrame) =>
+                                    throw new Exception(
+                                        $"Unexpected number of rolls to include in bonus {unexpectedRollsToInclude} with frame score {unexpectedFrame}")
+                            };
+
+                            result += nextBonus;
+                        }
                     }
                 }
             }

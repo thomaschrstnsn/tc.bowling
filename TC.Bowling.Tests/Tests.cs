@@ -52,4 +52,30 @@ public class Tests
         game.Score.Should().Be(133);
         game.State.Should().BeOfType<GameState.Complete>();
     }
+
+    [Test]
+    public void PerfectGame()
+    {
+        var game = Game.New();
+        foreach (var _ in Enumerable.Range(0, 12))
+        {
+            game = game.Roll(10); // strike
+        }
+
+        game.Score.Should().Be(300);
+        game.State.Should().BeOfType<GameState.Complete>();
+    }
+    
+    [Test]
+    public void GutterGame()
+    {
+        var game = Game.New();
+        foreach (var _ in Enumerable.Range(0, 20))
+        {
+            game = game.Roll(0); // no pins
+        }
+
+        game.Score.Should().Be(0);
+        game.State.Should().BeOfType<GameState.Complete>();
+    }
 }
