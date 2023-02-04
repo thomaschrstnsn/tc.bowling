@@ -84,7 +84,7 @@ public abstract record FrameScore
                 third);
     }
 
-    private IImmutableList<RolledPins> RolledPins {get; }
+    public IImmutableList<RolledPins> RolledPins {get; }
 
     public int Score => RolledPins.Select(rp => rp.Pins).Sum();
 

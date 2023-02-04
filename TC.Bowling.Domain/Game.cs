@@ -43,7 +43,7 @@ public record Game
         // second roll in a frame
         (var frame, FrameScore.FirstRoll) =>
             new GameState.SecondRoll(new Frame(frame)),
-        
+
         // finished
         (10, _)
             => new GameState.Complete(),
@@ -113,85 +113,59 @@ public record Game
         };
     }
 
-    public int Score
+    public int Score()
     {
-        get
+        var result = 0;
+        foreach (var (frame, index) in
+                 Frames.Select(
+                     (
+                         frame,
+                         index) => (frame, index)))
         {
-            var result = 0;
-            foreach (var (frame, index) in
-                     Frames.Select(
-                         (
-                             frame,
-                             index) => (frame, index)))
+            result += frame.Score;
+
+            if (frame.Score == 10 && index < 9)
             {
-                result += frame.Score;
-
-                if (frame.Score == 10 && index < 9)
+                // bonus for strike/spare before final frame
+                var rollsToInclude = frame switch
                 {
-                    // bonus for strike/spare before final frame
-                    var rollsToInclude = frame switch
-                    {
-                        // strike
-                        FrameScore.FirstRoll => 2,
-                        // spare
-                        FrameScore.SecondRoll => 1,
+                    // strike
+                    FrameScore.FirstRoll => 2,
+                    // spare
+                    FrameScore.SecondRoll => 1,
 
-                        _ => throw new Exception($"Unexpected frame score {frame}"),
-                    };
+                    _ => throw new Exception($"Unexpected frame score {frame}"),
+                };
 
-                    var nextIndex = index + 1;
-                    if (Frames.Count > nextIndex)
-                    {
-                        var nextFrame = Frames[nextIndex];
-
-                        var bonus = (rollsToInclude, nextFrame) switch
-                        {
-                            (_, FrameScore.FirstRoll firstRoll) => firstRoll.Score,
-
-                            (1, FrameScore.SecondRoll secondRoll) => secondRoll.First.Pins,
-                            (1, FrameScore.FinalFrameTwo bonusFrame) => bonusFrame.First.Pins,
-                            (1, FrameScore.FinalFrameThree bonusFrame) => bonusFrame.First.Pins,
-
-                            (2, FrameScore.SecondRoll secondRoll) => secondRoll.Score,
-                            (2, FrameScore.FinalFrameTwo bonusFrame) =>
-                                bonusFrame.First.Pins + bonusFrame.Second.Pins,
-                            (2, FrameScore.FinalFrameThree bonusFrame) =>
-                                bonusFrame.First.Pins + bonusFrame.Second.Pins,
-
-                            var (unexpectedRollsToInclude, unexpectedFrame) =>
-                                throw new Exception(
-                                    $"Unexpected number of rolls to include in bonus {unexpectedRollsToInclude} with frame score {unexpectedFrame}")
-                        };
-
-                        result += bonus;
-
-                        var nextNextIndex = nextIndex + 1;
-                        if (nextFrame is FrameScore.FirstRoll {Pins.Pins: 10} && rollsToInclude == 2 &&
-                            Frames.Count > nextNextIndex)
-                        {
-                            var nextNextFrame = Frames[nextNextIndex];
-
-                            var nextBonus = (rollsToInclude-1, nextNextFrame) switch
-                            {
-                                (_, FrameScore.FirstRoll firstRoll) => firstRoll.Score,
-
-                                (1, FrameScore.SecondRoll secondRoll) => secondRoll.First.Pins,
-                                (1, FrameScore.FinalFrameTwo bonusFrame) => bonusFrame.First.Pins,
-                                (1, FrameScore.FinalFrameThree bonusFrame) => bonusFrame.First.Pins,
-
-                                var (unexpectedRollsToInclude, unexpectedFrame) =>
-                                    throw new Exception(
-                                        $"Unexpected number of rolls to include in bonus {unexpectedRollsToInclude} with frame score {unexpectedFrame}")
-                            };
-
-                            result += nextBonus;
-                        }
-                    }
-                }
+                var bonus = BonusScoreFromNextRolls(nextFrameIndex: index + 1, rollsToInclude: rollsToInclude);
+                result += bonus;
             }
-
-            return result;
         }
+
+        return result;
+    }
+
+    private int BonusScoreFromNextRolls(
+        int nextFrameIndex,
+        int rollsToInclude)
+    {
+        if (Frames.Count <= nextFrameIndex)
+        {
+            return 0;
+        }
+        
+        var currentBonusFrame = Frames[nextFrameIndex];
+        var bonusFromThisFrame = currentBonusFrame.RolledPins.Take(rollsToInclude).Select(roll => roll.Pins).Sum();
+
+        if (currentBonusFrame.RolledPins.Count < rollsToInclude)
+        {
+            // we did not get enough rolls, try to proceed to next frame (if present)
+            return bonusFromThisFrame + BonusScoreFromNextRolls(
+                nextFrameIndex: nextFrameIndex + 1,
+                rollsToInclude: rollsToInclude - currentBonusFrame.RolledPins.Count);
+        }
+
+        return bonusFromThisFrame;
     }
 
     public static Game New() => new(ImmutableList<FrameScore>.Empty);

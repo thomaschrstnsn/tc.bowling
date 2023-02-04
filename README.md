@@ -1,6 +1,6 @@
 # Bowling Game
 
-Keeps track of score, frames and current state of a standard [Ten-pin bowling](https://en.wikipedia.org/wiki/Ten-pin_bowling) game.
+Keeps track of score, frames and current state of a standard [Ten-pin bowling](https://en.wikipedia.org/wiki/Ten-pin_bowling) game for a single player.
 
 ## API design
 
@@ -22,7 +22,7 @@ var game = TC.Bowling.Game.New(); // creates a fresh game
 
 ### Getting the score of a game
 
-`game.Score` returns the current score of the game.
+`game.Score()` returns the current score of the game.
 
 ### Registering a roll
 
