@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TC.Bowling.Domain", "TC.Bow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TC.Bowling.Tests", "TC.Bowling.Tests\TC.Bowling.Tests.csproj", "{A94925BE-6411-40D1-A59F-C1F611B32B86}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "/", "..\..\..\..\..", "{E9A437EA-29A5-40AD-8801-C6266243DF3A}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
