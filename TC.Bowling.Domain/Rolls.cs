@@ -14,6 +14,8 @@ public record RolledPins
             _ => pins
         };
     }
+
+    public static implicit operator RolledPins(int pins) => new(pins);
 }
 
 public abstract record FrameScore

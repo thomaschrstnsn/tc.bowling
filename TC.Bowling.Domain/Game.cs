@@ -26,23 +26,23 @@ public record Game
 
         // new frame
         (var frame and <= 9, FrameScore.SecondRoll) =>
-            new GameState.FirstRoll(new Frame(frame + 1)),
+            new GameState.FirstRoll(frame + 1),
 
         // strike in the last frame
         (var frame and 10, FrameScore.FirstRoll {Score: 10}) =>
-            new GameState.SecondRoll(new Frame(frame)),
+            new GameState.SecondRoll(frame),
 
         // bonus roll (strike or spare in last frame)
         (var frame and 10, FrameScore.FinalFrameTwo {Score: >= 10}) =>
-            new GameState.FinalBonusRoll(new Frame(frame)),
+            new GameState.FinalBonusRoll(frame),
 
         // strike (before the last frame)
         (var frame and < 10, FrameScore.FirstRoll {Score: 10}) =>
-            new GameState.FirstRoll(new Frame(frame + 1)),
+            new GameState.FirstRoll(frame + 1),
 
         // second roll in a frame
         (var frame, FrameScore.FirstRoll) =>
-            new GameState.SecondRoll(new Frame(frame)),
+            new GameState.SecondRoll(frame),
 
         // finished
         (10, _)
@@ -54,15 +54,14 @@ public record Game
 
     public Game Roll(int roll)
     {
-        var rolledPins = new RolledPins(roll);
-        FrameScore.FirstRoll NewFrame() => new(rolledPins);
+        FrameScore.FirstRoll NewFrame() => new(roll);
 
         FrameScore.SecondRoll SecondRoll()
         {
             var currentFrame = Frames.Last();
             if (currentFrame is FrameScore.FirstRoll firstRoll)
             {
-                return FrameScore.SecondRoll.FromFirstRoll(firstRoll, rolledPins);
+                return FrameScore.SecondRoll.FromFirstRoll(firstRoll, roll);
             }
 
             throw new Exception($"game state mismatch, expected to perform a second roll but found {currentFrame}");
@@ -73,7 +72,7 @@ public record Game
             var currentFrame = Frames.Last();
             if (currentFrame is FrameScore.FirstRoll firstRoll)
             {
-                return FrameScore.FinalFrameTwo.FromFirstRoll(firstRoll, rolledPins);
+                return FrameScore.FinalFrameTwo.FromFirstRoll(firstRoll, roll);
             }
 
             throw new Exception($"game state mismatch, expected to perform a second roll but found {currentFrame}");
@@ -84,7 +83,7 @@ public record Game
             var currentFrame = Frames.Last();
             if (currentFrame is FrameScore.FinalFrameTwo secondRoll)
             {
-                return FrameScore.FinalFrameThree.FromFinalFrameTwo(secondRoll, rolledPins);
+                return FrameScore.FinalFrameThree.FromFinalFrameTwo(secondRoll, roll);
             }
 
             throw new Exception($"game state mismatch, expected to perform a third roll but found {currentFrame}");

@@ -27,3 +27,5 @@ var game = TC.Bowling.Game.New(); // creates a fresh game
 ### Registering a roll
 
 `game.Roll(numberOfPins)` will return a new [`Game`](./TC.Bowling.Domain/Game.cs) value, when it is a valid roll (exception otherwise);
+
+Rolls can be registered until the game is completed (after finalizing the 10th frame), taking anywhere from 12 to 20 rolls to accomplish.

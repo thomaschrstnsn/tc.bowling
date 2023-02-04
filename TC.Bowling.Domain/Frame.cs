@@ -20,5 +20,7 @@ public sealed record Frame
         };
     }
 
+    public static implicit operator Frame(int number) => new(number);
+
     public static Frame First => new(1);
 }
