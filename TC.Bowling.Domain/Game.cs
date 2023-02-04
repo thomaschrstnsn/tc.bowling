@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
-using System.Runtime.InteropServices;
 
 namespace TC.Bowling.Domain;
 
 public sealed record Frame
 {
-    public int Number { get; init; }
+    public int Number { get; }
 
     public Frame(int number)
     {
@@ -36,9 +35,7 @@ public abstract record GameState
 
     public sealed record Complete : GameState;
 
-    private GameState()
-    {
-    }
+    private GameState() { }
 }
 
 public record Game
@@ -79,6 +76,7 @@ public record Game
         (var frame and 10, FrameScore.FirstRoll {Score: 10}) =>
             new GameState.SecondRoll(new Frame(frame)),
 
+        // second roll in a frame
         (var frame, FrameScore.FirstRoll) =>
             new GameState.SecondRoll(new Frame(frame)),
 
